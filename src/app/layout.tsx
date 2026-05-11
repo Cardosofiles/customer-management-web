@@ -1,21 +1,21 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next'
 
-import "@/styles/globals.css";
-import { geistMono, geistSans } from "@/utils/fonts";
+import '@/styles/globals.css'
+import { geistMono, geistSans } from '@/utils/fonts'
 
 export const metadata: Metadata = {
   title: {
-    default: "Customer Management",
-    template: "%s | Customer Management",
+    default: 'Customer Management',
+    template: '%s | Customer Management',
   },
   description:
-    "Aplicação MVP para gerenciamento de clientes, com funcionalidade de queries SQL em rota administrativa. Proposta para email-markting coleta de leads.",
-};
+    'Aplicação MVP para gerenciamento de clientes, com funcionalidade de queries SQL em rota administrativa. Proposta para email-markting coleta de leads.',
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html
@@ -24,5 +24,5 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
-  );
+  )
 }
