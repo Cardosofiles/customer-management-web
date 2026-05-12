@@ -31,41 +31,23 @@ export function useCep() {
     setLoading(true)
     setError(null)
     try {
-      setLoading(true)
-      setError(null)
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
+
       let res: Response
       try {
-        const controller = new AbortController()
-       try {
-         const controller = new AbortController()
-         const timeoutId = setTimeout(() => controller.abort(), 10000)
-         try {
-           res = await fetch(`https://viacep.com.br/ws/${clean}/json/`, {
-             signal: controller.signal,
-           })
-         } finally {
-           clearTimeout(timeoutId)
-         }
-         if (!res.ok) {
-           setError('Erro ao buscar CEP')
-           return null
-         }
-        if (!res.ok) {
-          setError('Erro ao buscar CEP')
-          return null
-        }
-      } catch (err) {
-        if (err instanceof Error && err.name === 'AbortError') {
-          setError('Tempo esgotado ao buscar CEP')
-        } else {
-          setError('Erro ao buscar CEP')
-        }
-        return null
+        res = await fetch(`https://viacep.com.br/ws/${clean}/json/`, {
+          signal: controller.signal,
+        })
+      } finally {
+        clearTimeout(timeoutId)
       }
+
       if (!res.ok) {
-        setError('CEP não encontrado')
+        setError('Erro ao buscar CEP')
         return null
       }
+
       const data: ViaCepResponse = await res.json()
       if (data.erro) {
         setError('CEP não encontrado')

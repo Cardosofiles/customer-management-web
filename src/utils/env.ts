@@ -4,7 +4,7 @@ import { z } from 'zod'
 const envSchema = z.object({
   // App
   APP_NAME: z.string().min(2, 'APP_NAME must be at least 2 characters long'),
-  APP_ENV: z.enum(['development', 'staging', 'production']).default('development'),
+  APP_ENV: z.enum(['development', 'staging', 'production']),
 
   // Database
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
@@ -14,7 +14,7 @@ const envSchema = z.object({
   BETTER_AUTH_URL: z
     .url('BETTER_AUTH_URL must be a valid URL')
     .refine(
-      (url) => process.env.APP_ENV !== 'production' || url.startsWith('https://'),
+      (url) => process.env.APP_ENV === 'development' || url.startsWith('https://'),
       'BETTER_AUTH_URL must use HTTPS in production'
     ),
 
