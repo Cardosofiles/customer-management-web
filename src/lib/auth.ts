@@ -1,17 +1,19 @@
 import { passkey } from '@better-auth/passkey'
-import { betterAuth } from 'better-auth'
+import { betterAuth, type User } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { nextCookies } from 'better-auth/next-js'
 import { admin, twoFactor } from 'better-auth/plugins'
-import { Resend } from 'resend'
 
+import {
+  sendEmailVerificationService,
+  sendResetPasswordMailService,
+  sendTwoFactorOTP,
+} from '@/lib/email'
 import { prisma } from '@/lib/prisma'
 import { env } from '@/utils/env'
 
-const mailer = new Resend(env.RESEND_API_KEY)
-
 export const auth = betterAuth({
-  appName: 'CRUD Next.js Web',
+  appName: env.APP_NAME,
   baseURL: env.BETTER_AUTH_URL,
   secret: env.BETTER_AUTH_SECRET,
 
@@ -20,25 +22,15 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
-    sendResetPassword: async ({ user, url }) => {
-      await mailer.emails.send({
-        from: env.RESEND_FROM,
-        to: user.email,
-        subject: 'Redefinir sua senha',
-        html: `<a href="${url}">Clique aqui para redefinir sua senha</a>`,
-      })
+    sendResetPassword: async ({ user, url }: { user: User; url: string }) => {
+      await sendResetPasswordMailService({ user, url })
     },
   },
 
   emailVerification: {
     sendOnSignUp: true,
-    sendVerificationEmail: async ({ user, url }) => {
-      await mailer.emails.send({
-        from: env.RESEND_FROM,
-        to: user.email,
-        subject: 'Confirme seu email',
-        html: `<a href="${url}">Confirmar email</a>`,
-      })
+    sendVerificationEmail: async ({ user, url }: { user: User; url: string }) => {
+      await sendEmailVerificationService({ user, url })
     },
   },
 
@@ -58,9 +50,13 @@ export const auth = betterAuth({
   },
 
   plugins: [
-    twoFactor({ issuer: 'CRUD Next.js Web' }),
+    twoFactor({
+      issuer: env.APP_NAME,
+      sendTOTPEmail: ({ user, otp }: { user: User; otp: string }) =>
+        sendTwoFactorOTP({ user, otp }),
+    }),
     passkey({
-      rpName: 'CRUD Next.js Web',
+      rpName: env.APP_NAME,
       rpID: new URL(env.BETTER_AUTH_URL).hostname,
       origin: env.BETTER_AUTH_URL,
     }),
