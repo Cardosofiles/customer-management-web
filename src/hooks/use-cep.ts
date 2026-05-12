@@ -33,11 +33,12 @@ export function useCep() {
     try {
       setLoading(true)
       setError(null)
+      let res: Response
       try {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 10000) // 10s timeout
-        const res = await fetch(`https://viacep.com.br/ws/${clean}/json/`, {
-          signal: controller.signal
+        const timeoutId = setTimeout(() => controller.abort(), 10000)
+        res = await fetch(`https://viacep.com.br/ws/${clean}/json/`, {
+          signal: controller.signal,
         })
         clearTimeout(timeoutId)
         if (!res.ok) {

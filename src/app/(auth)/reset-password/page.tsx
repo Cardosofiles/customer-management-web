@@ -1,6 +1,7 @@
-import { ResetPassword } from '@/modules/auth'
 import type { Metadata } from 'next'
-import type { JSX } from 'react'
+import { Suspense, type JSX } from 'react'
+
+import { ResetPassword } from '@/modules/auth'
 
 export const metadata: Metadata = {
   title: 'Redefinir senha',
@@ -8,7 +9,11 @@ export const metadata: Metadata = {
 }
 
 const ResetPasswordPage = (): JSX.Element => {
-  return <ResetPassword />
+  return (
+    <Suspense fallback={<div className="min-h-svh" aria-busy="true" />}>
+      <ResetPassword />
+    </Suspense>
+  )
 }
 
 export default ResetPasswordPage

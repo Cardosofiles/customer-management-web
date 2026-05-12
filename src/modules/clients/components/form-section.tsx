@@ -1,9 +1,9 @@
 import { cn } from '@/utils/cn'
-import type { JSX } from 'react'
+import type { JSX, ReactNode } from 'react'
 
 interface FormSectionProps {
   title: string
-  children: React.ReactNode
+  children: ReactNode
   className?: string
 }
 

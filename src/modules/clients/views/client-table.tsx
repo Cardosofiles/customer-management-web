@@ -229,7 +229,6 @@ const ClienteTable = ({
                         {c.ativo ? 'Desativar' : 'Ativar'}
                       </DropdownMenuItem>
                       <ClienteDeleteDialog
-                        clienteId={c.id}
                         clienteNome={getDisplayName(c)}
                         onConfirm={() => handleDelete(c.id)}
                       />
