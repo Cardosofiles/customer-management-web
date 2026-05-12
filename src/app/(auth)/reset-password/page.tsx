@@ -1,11 +1,14 @@
+import { ResetPassword } from '@/modules/auth'
+import type { Metadata } from 'next'
 import type { JSX } from 'react'
 
+export const metadata: Metadata = {
+  title: 'Redefinir senha',
+  description: 'Crie uma nova senha para sua conta',
+}
+
 const ResetPasswordPage = (): JSX.Element => {
-  return (
-    <div>
-      <h1>ResetPasswordPage</h1>
-    </div>
-  )
+  return <ResetPassword />
 }
 
 export default ResetPasswordPage
