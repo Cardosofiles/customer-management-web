@@ -45,7 +45,7 @@ function normalizeData(data: ClienteFormData): Prisma.ClienteCreateInput {
       nomeCompleto: data.nomeCompleto,
       cpf: stripMask(data.cpf),
       rg: data.rg || null,
-      dataNascimento: data.dataNascimento ? new Date(data.dataNascimento) : null,
+      dataNascimento: data.dataNascimento ? new Date(data.dataNascimento + 'T00:00:00Z') : null,
       razaoSocial: null,
       nomeFantasia: null,
       cnpj: null,
