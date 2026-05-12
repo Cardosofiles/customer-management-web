@@ -67,7 +67,8 @@ export function useCep() {
         cidade: data.localidade ?? '',
         estado: data.uf ?? '',
       }
-    } catch {
+    } catch (err) {
+      console.error('Erro ao buscar CEP:', err)
       setError('Erro ao buscar CEP')
       return null
     } finally {
