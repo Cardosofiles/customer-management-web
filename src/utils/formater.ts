@@ -56,6 +56,10 @@ const validateCPF = (cpf: string): boolean => {
   return r === +d[10]
 }
 
+const validateEmail = (email: string): boolean => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())
+}
+
 const validateCNPJ = (cnpj: string): boolean => {
   const d = cnpj.toUpperCase().replace(/[.\-/\s]/g, '')
 
@@ -131,4 +135,5 @@ export {
   stripMask,
   validateCNPJ,
   validateCPF,
+  validateEmail,
 }
