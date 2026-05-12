@@ -15,7 +15,6 @@ import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import type { JSX } from 'react'
 
 interface Props {
-  clienteId: string
   clienteNome: string
   onConfirm: () => void
 }
