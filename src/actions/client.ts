@@ -171,8 +171,8 @@ export async function getClientes(params?: {
             { nomeCompleto: { contains: search, mode: 'insensitive' } },
             { razaoSocial: { contains: search, mode: 'insensitive' } },
             { nomeFantasia: { contains: search, mode: 'insensitive' } },
-            { cpf: { contains: search } },
-            { cnpj: { contains: search } },
+            { cpf: { contains: stripMask(search) } },
+            { cnpj: { contains: stripMask(search) } },
             { email: { contains: search, mode: 'insensitive' } },
           ],
         }
