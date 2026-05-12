@@ -15,7 +15,7 @@ const UserManagementPage = async ({
   searchParams: Promise<{ page?: string }>
 }): Promise<JSX.Element> => {
   const { page: pageParam } = await searchParams
-  const page = Math.max(1, Number(pageParam ?? 1))
+  const page = Math.max(1, parseInt(pageParam ?? '1', 10) || 1)
   const pageSize = 20
 
   const [users, total] = await Promise.all([
