@@ -4,8 +4,8 @@ import { usePathname } from 'next/navigation'
 
 const ROUTE_TITLES: Record<string, string> = {
   '/dashboard': 'Dashboard',
-  '/dashboard/clientes': 'Clientes',
-  '/dashboard/clientes/novo': 'Novo Cliente',
+  '/dashboard/clients': 'Clientes',
+  '/dashboard/clients/new': 'Novo Cliente',
   '/settings': 'Configuracoes',
 }
 

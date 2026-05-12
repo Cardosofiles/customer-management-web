@@ -1,3 +1,4 @@
+import type { PessoaFisicaFormData, PessoaJuridicaFormData } from '@/types/user.type'
 import { validateCNPJ, validateCPF } from '@/utils/formater'
 import { z } from 'zod'
 
@@ -60,3 +61,46 @@ export const clienteSchema = z.discriminatedUnion('tipo', [
   pessoaFisicaSchema,
   pessoaJuridicaSchema,
 ])
+
+export const defaultValuesPF: PessoaFisicaFormData = {
+  tipo: 'PESSOA_FISICA',
+  nomeCompleto: '',
+  cpf: '',
+  rg: '',
+  dataNascimento: '',
+  cep: '',
+  rua: '',
+  numero: '',
+  complemento: '',
+  bairro: '',
+  cidade: '',
+  estado: '',
+  email: '',
+  telefone: '',
+  celular: '',
+  site: '',
+  observacoes: '',
+}
+
+export const defaultValuesPJ: PessoaJuridicaFormData = {
+  tipo: 'PESSOA_JURIDICA',
+  razaoSocial: '',
+  nomeFantasia: '',
+  cnpj: '',
+  inscricaoEstadual: '',
+  inscricaoMunicipal: '',
+  responsavelNome: '',
+  responsavelCargo: '',
+  cep: '',
+  rua: '',
+  numero: '',
+  complemento: '',
+  bairro: '',
+  cidade: '',
+  estado: '',
+  email: '',
+  telefone: '',
+  celular: '',
+  site: '',
+  observacoes: '',
+}
