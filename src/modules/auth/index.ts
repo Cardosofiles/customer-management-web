@@ -1,3 +1,4 @@
+export * from './ui/components/shared/auth-shell'
 export * from './ui/views/forgot-password'
 export * from './ui/views/reset-password'
 export * from './ui/views/sign-in'

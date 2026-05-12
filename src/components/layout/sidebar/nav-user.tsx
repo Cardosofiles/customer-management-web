@@ -24,6 +24,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+import { Skeleton } from '@/components/ui/skeleton'
 import { signOut, useSession } from '@/lib/auth-client'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -43,7 +44,23 @@ const NavUser = (): JSX.Element | null => {
     })
   }
 
-  if (isPending || !session) return null
+  if (isPending) {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton size="lg" className="gap-3">
+            <Skeleton className="h-8 w-8 rounded-lg" />
+            <div className="grid flex-1 gap-1">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-3 w-32" />
+            </div>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    )
+  }
+
+  if (!session) return null
 
   const { name, email, image } = session.user
   const initials = name

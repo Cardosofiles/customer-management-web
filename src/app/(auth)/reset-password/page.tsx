@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { Suspense, type JSX } from 'react'
 
-import { ResetPassword } from '@/modules/auth'
+import { Skeleton } from '@/components/ui/skeleton'
+import { AuthShell, ResetPassword } from '@/modules/auth'
 
 export const metadata: Metadata = {
   title: 'Redefinir senha',
@@ -12,9 +13,26 @@ const ResetPasswordPage = (): JSX.Element => {
   return (
     <Suspense
       fallback={
-        <div className="min-h-svh" role="status" aria-live="polite" aria-busy="true">
-          <span className="sr-only">Carregando...</span>
-        </div>
+        <AuthShell>
+          <div role="status" aria-live="polite" aria-busy="true" className="space-y-4">
+            <span className="sr-only">Carregando...</span>
+            <div className="space-y-2">
+              <Skeleton className="h-6 w-40" />
+              <Skeleton className="h-4 w-56" />
+            </div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-36" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+              <Skeleton className="h-10 w-full" />
+            </div>
+          </div>
+        </AuthShell>
       }
     >
       <ResetPassword />
