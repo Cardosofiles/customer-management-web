@@ -1,4 +1,4 @@
-export function formatCPF(value: string): string {
+const formatCPF = (value: string): string => {
   const d = value.replace(/\D/g, '').slice(0, 11)
   if (d.length <= 3) return d
   if (d.length <= 6) return `${d.slice(0, 3)}.${d.slice(3)}`
@@ -6,8 +6,12 @@ export function formatCPF(value: string): string {
   return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`
 }
 
-export function formatCNPJ(value: string): string {
-  const d = value.replace(/\D/g, '').slice(0, 14)
+const formatCNPJ = (value: string): string => {
+  const clean = value.toUpperCase().replace(/[^A-Z0-9]/g, '')
+  const raiz = clean.slice(0, 12)
+  const dv = clean.slice(12).replace(/\D/g, '').slice(0, 2)
+  const d = (raiz + dv).slice(0, 14)
+
   if (d.length <= 2) return d
   if (d.length <= 5) return `${d.slice(0, 2)}.${d.slice(2)}`
   if (d.length <= 8) return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5)}`
@@ -15,12 +19,12 @@ export function formatCNPJ(value: string): string {
   return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8, 12)}-${d.slice(12)}`
 }
 
-export function formatCEP(value: string): string {
+const formatCEP = (value: string): string => {
   const d = value.replace(/\D/g, '').slice(0, 8)
   return d.length <= 5 ? d : `${d.slice(0, 5)}-${d.slice(5)}`
 }
 
-export function formatTelefone(value: string): string {
+const formatTelefone = (value: string): string => {
   const d = value.replace(/\D/g, '').slice(0, 11)
   if (d.length === 0) return ''
   if (d.length <= 2) return `(${d}`
@@ -29,11 +33,15 @@ export function formatTelefone(value: string): string {
   return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`
 }
 
-export function stripMask(value: string): string {
-  return value.replace(/\D/g, '')
-}
+const stripMask = (value: string): string => value.replace(/\D/g, '')
 
-export function validateCPF(cpf: string): boolean {
+const stripCNPJMask = (value: string): string =>
+  value
+    .toUpperCase()
+    .replace(/[.\-/\s]/g, '')
+    .slice(0, 14)
+
+const validateCPF = (cpf: string): boolean => {
   const d = cpf.replace(/\D/g, '')
   if (d.length !== 11 || /^(\d)\1{10}$/.test(d)) return false
   let s = 0
@@ -48,27 +56,41 @@ export function validateCPF(cpf: string): boolean {
   return r === +d[10]
 }
 
-export function validateCNPJ(cnpj: string): boolean {
-  const d = cnpj.replace(/\D/g, '')
-  if (d.length !== 14 || /^(\d)\1{13}$/.test(d)) return false
-  const calc = (str: string, w: number[]) => w.reduce((acc, x, i) => acc + +str[i] * x, 0)
+const validateCNPJ = (cnpj: string): boolean => {
+  const d = cnpj.toUpperCase().replace(/[.\-/\s]/g, '')
+
+  if (d.length !== 14) return false
+
+  if (/^(.)\1{13}$/.test(d)) return false
+
+  if (!/^\d{2}$/.test(d.slice(12))) return false
+
+  const toVal = (c: string): number => c.charCodeAt(0) - 48
+
+  const calc = (str: string, weights: number[]): number =>
+    weights.reduce((acc, w, i) => acc + toVal(str[i]) * w, 0)
+
   const r1 = calc(d, [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]) % 11
   const r2 = calc(d, [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]) % 11
-  return (r1 < 2 ? 0 : 11 - r1) === +d[12] && (r2 < 2 ? 0 : 11 - r2) === +d[13]
+
+  const dv1 = r1 < 2 ? 0 : 11 - r1
+  const dv2 = r2 < 2 ? 0 : 11 - r2
+
+  return dv1 === +d[12] && dv2 === +d[13]
 }
 
-export function getDisplayName(c: {
+const getDisplayName = (c: {
   tipo: string
   nomeCompleto?: string | null
   razaoSocial?: string | null
   nomeFantasia?: string | null
-}): string {
+}): string => {
   return c.tipo === 'PESSOA_JURIDICA'
     ? c.nomeFantasia || c.razaoSocial || '—'
     : c.nomeCompleto || '—'
 }
 
-export const ESTADOS_BR = [
+const ESTADOS_BR = [
   { value: 'AC', label: 'Acre' },
   { value: 'AL', label: 'Alagoas' },
   { value: 'AP', label: 'Amapá' },
@@ -97,3 +119,16 @@ export const ESTADOS_BR = [
   { value: 'SE', label: 'Sergipe' },
   { value: 'TO', label: 'Tocantins' },
 ] as const
+
+export {
+  ESTADOS_BR,
+  formatCEP,
+  formatCNPJ,
+  formatCPF,
+  formatTelefone,
+  getDisplayName,
+  stripCNPJMask,
+  stripMask,
+  validateCNPJ,
+  validateCPF,
+}
