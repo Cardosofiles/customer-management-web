@@ -238,7 +238,7 @@ const seedClientes = async () => {
         nomeCompleto: nome,
         cpf,
         rg: padNumber(randomInt(1000000, 9999999, rng), 7),
-        dataNascimento: randomDate(new Date(1970, 0, 1), new Date(2002, 11, 31), rng),
+        dataNascimento: randomDate(new Date(1970, 0, 1), new Date(2002, 11, 31), rng).toISOString(),
         cep: padNumber(randomInt(10000000, 99999999, rng), 8),
         rua: pick(ruas, rng),
         numero: `${randomInt(10, 999, rng)}`,
