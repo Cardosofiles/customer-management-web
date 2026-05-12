@@ -10,7 +10,13 @@ export const metadata: Metadata = {
 
 const ResetPasswordPage = (): JSX.Element => {
   return (
-    <Suspense fallback={<div className="min-h-svh" aria-busy="true" />}>
+    <Suspense
+      fallback={
+        <div className="min-h-svh" role="status" aria-live="polite" aria-busy="true">
+          <span className="sr-only">Carregando...</span>
+        </div>
+      }
+    >
       <ResetPassword />
     </Suspense>
   )
