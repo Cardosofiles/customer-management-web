@@ -36,11 +36,20 @@ export function useCep() {
       let res: Response
       try {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 10000)
-        res = await fetch(`https://viacep.com.br/ws/${clean}/json/`, {
-          signal: controller.signal,
-        })
-        clearTimeout(timeoutId)
+       try {
+         const controller = new AbortController()
+         const timeoutId = setTimeout(() => controller.abort(), 10000)
+         try {
+           res = await fetch(`https://viacep.com.br/ws/${clean}/json/`, {
+             signal: controller.signal,
+           })
+         } finally {
+           clearTimeout(timeoutId)
+         }
+         if (!res.ok) {
+           setError('Erro ao buscar CEP')
+           return null
+         }
         if (!res.ok) {
           setError('Erro ao buscar CEP')
           return null
