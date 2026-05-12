@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 
+import { cn } from '@/lib/utils'
+import { Providers } from '@/providers'
 import '@/styles/globals.css'
-import { geistMono, geistSans } from '@/utils/fonts'
+import { geistMono, geistSans, inter } from '@/utils/fonts'
 
 export const metadata: Metadata = {
   title: {
@@ -20,9 +22,20 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={cn(
+        'h-full',
+        'antialiased',
+        'dark',
+        geistSans.variable,
+        geistMono.variable,
+        'font-sans',
+        inter.variable
+      )}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   )
 }
