@@ -9,7 +9,13 @@ export const metadata: Metadata = {
 
 const VerifyEmailPage = (): JSX.Element => {
   return (
-    <Suspense fallback={<div className="min-h-svh" aria-busy="true" />}>
+    <Suspense
+      fallback={
+        <div className="min-h-svh" role="status" aria-live="polite" aria-busy="true">
+          <span className="sr-only">Carregando...</span>
+        </div>
+      }
+    >
       <VerifyEmail />
     </Suspense>
   )
