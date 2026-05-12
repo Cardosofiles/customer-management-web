@@ -142,8 +142,31 @@ const toSlug = (value: string) =>
 
 const padNumber = (value: number, length: number) => value.toString().padStart(length, '0')
 
-const generateCpf = (index: number) => `9${padNumber(index + 1, 10)}`
-const generateCnpj = (index: number) => `8${padNumber(index + 1, 13)}`
+const generateCpf = (index: number) => {
+  const base = padNumber(index + 1, 9)
+  const digits = base.split('').map(Number)
+  const sum1 = digits.reduce((acc, digit, idx) => acc + digit * (10 - idx), 0)
+  const mod1 = (sum1 * 10) % 11
+  const d1 = mod1 === 10 ? 0 : mod1
+  const sum2 = [...digits, d1].reduce((acc, digit, idx) => acc + digit * (11 - idx), 0)
+  const mod2 = (sum2 * 10) % 11
+  const d2 = mod2 === 10 ? 0 : mod2
+  return `${base}${d1}${d2}`
+}
+
+const generateCnpj = (index: number) => {
+  const base = padNumber(index + 1, 12)
+  const digits = base.split('').map(Number)
+  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+  const sum1 = digits.reduce((acc, digit, idx) => acc + digit * weights1[idx], 0)
+  const mod1 = sum1 % 11
+  const d1 = mod1 < 2 ? 0 : 11 - mod1
+  const sum2 = [...digits, d1].reduce((acc, digit, idx) => acc + digit * weights2[idx], 0)
+  const mod2 = sum2 % 11
+  const d2 = mod2 < 2 ? 0 : 11 - mod2
+  return `${base}${d1}${d2}`
+}
 
 const randomInt = (min: number, max: number, rng: () => number) =>
   Math.floor(rng() * (max - min + 1)) + min

@@ -1,6 +1,6 @@
 import { VerifyEmail } from '@/modules/auth'
 import type { Metadata } from 'next'
-import type { JSX } from 'react'
+import { Suspense, type JSX } from 'react'
 
 export const metadata: Metadata = {
   title: 'Verificar email',
@@ -8,7 +8,17 @@ export const metadata: Metadata = {
 }
 
 const VerifyEmailPage = (): JSX.Element => {
-  return <VerifyEmail />
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-svh" role="status" aria-live="polite" aria-busy="true">
+          <span className="sr-only">Carregando...</span>
+        </div>
+      }
+    >
+      <VerifyEmail />
+    </Suspense>
+  )
 }
 
 export default VerifyEmailPage

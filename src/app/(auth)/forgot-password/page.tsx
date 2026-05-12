@@ -1,6 +1,7 @@
-import { ForgotPassword } from '@/modules/auth'
 import type { Metadata } from 'next'
 import type { JSX } from 'react'
+
+import { ForgotPassword } from '@/modules/auth'
 
 export const metadata: Metadata = {
   title: 'Esqueci minha senha',
