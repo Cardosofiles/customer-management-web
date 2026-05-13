@@ -30,6 +30,7 @@ export interface SqlQueryResult {
   rows: Record<string, unknown>[]
   duration: number
   rowCount: number | null
+  message?: string
 }
 
 export interface SchemaColumn {

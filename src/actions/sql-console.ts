@@ -1,24 +1,88 @@
 'use server'
 
+import { headers } from 'next/headers'
+
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { headers } from 'next/headers'
 
 const BLOCKED_PATTERNS = [
   /DROP\s+TABLE/i,
   /DROP\s+DATABASE/i,
+  /DROP\s+SCHEMA/i,
   /TRUNCATE\s+TABLE/i,
-  /DELETE\s+FROM\s+"?user"?/i,
-  /DELETE\s+FROM\s+"?session"?/i,
+  /ALTER\s+TABLE.+DROP\s+COLUMN/i,
 ]
 
 async function requireAdmin() {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session || session.user.role !== 'admin') {
-    throw new Error('Unauthorized')
+    throw new Error('Acesso negado: somente administradores podem executar queries.')
   }
   return session
 }
+
+// ── Detecta se a query retorna rows ──────────────────────────────────────────
+
+function isReadQuery(sql: string): boolean {
+  const q = sql.trim().toUpperCase()
+  return q.startsWith('SELECT') || q.startsWith('WITH')
+}
+
+// ── Tradução de erros do PostgreSQL/Prisma ────────────────────────────────────
+
+function translatePrismaError(e: unknown): string {
+  const msg = e instanceof Error ? e.message : String(e)
+
+  if (msg.includes('relation') && msg.includes('does not exist'))
+    return 'Tabela não encontrada. Verifique o nome no esquema.'
+  if (msg.includes('column') && msg.includes('does not exist'))
+    return 'Coluna não encontrada. Verifique o nome da coluna.'
+  if (msg.includes('syntax error')) return 'Erro de sintaxe SQL. Verifique a query.'
+  if (msg.includes('permission denied')) return 'Permissão negada para executar esta operação.'
+  if (msg.includes('violates foreign key'))
+    return 'Violação de chave estrangeira. Há registros dependentes que impedem a operação.'
+  if (msg.includes('duplicate key') || msg.includes('unique constraint'))
+    return 'Registro duplicado. Já existe um valor com esta chave única.'
+  if (msg.includes('null value') && msg.includes('not-null'))
+    return 'Campo obrigatório não pode ser nulo.'
+  if (msg.includes('value too long')) return 'Valor muito longo para o campo especificado.'
+  if (msg.includes('division by zero')) return 'Divisão por zero detectada na query.'
+  if (msg.includes('invalid input syntax'))
+    return 'Valor com formato inválido para o tipo de dado esperado.'
+  if (msg.includes('out of range')) return 'Valor fora do intervalo permitido para o tipo de dado.'
+  if (msg.includes('deadlock detected'))
+    return 'Deadlock detectado. Tente executar a query novamente.'
+  if (msg.includes('canceling statement due to conflict'))
+    return 'Query cancelada por conflito com outra operação. Tente novamente.'
+  if (msg.includes('connection') && msg.includes('refused'))
+    return 'Não foi possível conectar ao banco de dados.'
+
+  return `Erro ao executar query: ${msg}`
+}
+
+// ── Mensagem de sucesso baseada no tipo de query ──────────────────────────────
+
+function buildSuccessMessage(sql: string, rowCount: number): string {
+  const q = sql.trim().toUpperCase()
+  const n = rowCount
+
+  if (q.startsWith('SELECT')) return `${n} ${n === 1 ? 'linha retornada' : 'linhas retornadas'}`
+  if (q.startsWith('INSERT'))
+    return `${n} ${n === 1 ? 'registro inserido' : 'registros inseridos'} com sucesso`
+  if (q.startsWith('UPDATE'))
+    return `${n} ${n === 1 ? 'registro atualizado' : 'registros atualizados'} com sucesso`
+  if (q.startsWith('DELETE'))
+    return `${n} ${n === 1 ? 'registro deletado' : 'registros deletados'} com sucesso`
+  if (q.startsWith('CREATE')) return 'Objeto criado com sucesso'
+  if (q.startsWith('ALTER')) return 'Estrutura alterada com sucesso'
+  if (q.startsWith('WITH')) return `${n} ${n === 1 ? 'linha retornada' : 'linhas retornadas'}`
+  if (q.startsWith('BEGIN') || q.startsWith('COMMIT'))
+    return `Transação executada · ${n} ${n === 1 ? 'linha afetada' : 'linhas afetadas'}`
+
+  return 'Query executada com sucesso'
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
 
 export async function executeSQL(sql: string) {
   const session = await requireAdmin()
@@ -35,28 +99,50 @@ export async function executeSQL(sql: string) {
   let rowCount: number | null = null
 
   try {
-    const result = await prisma.$queryRawUnsafe(sql)
-    rows = result as Record<string, unknown>[]
-    rowCount = rows.length
+    if (isReadQuery(sql)) {
+      // SELECT / WITH — retorna array de rows
+      const result = await prisma.$queryRawUnsafe(sql)
+      rows = (result as Record<string, unknown>[]) ?? []
+      rowCount = rows.length
+    } else {
+      // INSERT / UPDATE / DELETE / BEGIN...COMMIT / CREATE / ALTER
+      // $executeRawUnsafe suporta múltiplos statements e retorna linhas afetadas
+      const affected = await prisma.$executeRawUnsafe(sql)
+      rows = []
+      rowCount = affected
+    }
   } catch (e) {
-    error = e instanceof Error ? e.message : String(e)
+    error = translatePrismaError(e)
   }
 
   const duration = Date.now() - start
 
-  await prisma.queryLog.create({
-    data: {
-      userId: session.user.id,
-      sql,
-      duration,
-      rowCount,
-      error,
-    },
-  })
+  // ✅ Log isolado em try/catch separado
+  // Razão: a query pode deletar o próprio usuário logado ou outros usuários,
+  // causando violação de FK no QueryLog (userId referencia user.id).
+  // O log nunca deve derrubar o resultado já executado com sucesso.
+  try {
+    await prisma.queryLog.create({
+      data: {
+        userId: session.user.id,
+        sql,
+        duration,
+        rowCount,
+        error,
+      },
+    })
+  } catch (logError) {
+    console.warn('[sql-console] Falha ao registrar query log:', logError)
+  }
 
   if (error) throw new Error(error)
 
-  return { rows, duration, rowCount }
+  return {
+    rows,
+    duration,
+    rowCount,
+    message: buildSuccessMessage(sql, rowCount ?? 0),
+  }
 }
 
 export async function getSchemaBrowser() {

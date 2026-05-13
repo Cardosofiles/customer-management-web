@@ -66,7 +66,7 @@ const SqlConsoleView = ({ initialSchema }: SqlConsoleViewProps): JSX.Element => 
       </div> */}
 
       <div className="grid min-h-0 flex-1 gap-6 lg:grid-cols-[260px_1fr]">
-        <aside className="min-h-0 overflow-hidden border border-border/60 bg-card">
+        <aside className="min-h-0 overflow-auto border border-border/60 bg-card">
           <div className="border-b border-border/60 px-4 py-3">
             <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Esquema</p>
           </div>
@@ -90,7 +90,7 @@ const SqlConsoleView = ({ initialSchema }: SqlConsoleViewProps): JSX.Element => 
             />
           </div>
 
-          <div className="flex min-h-[260px] flex-1 flex-col border border-border/60 bg-card sm:min-h-0">
+          <div className="flex min-h-65 flex-1 flex-col border border-border/60 bg-card sm:min-h-0">
             <div className="border-b border-border/60 px-4 py-3">
               <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
                 Resultados
