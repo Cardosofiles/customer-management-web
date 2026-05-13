@@ -30,15 +30,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table' // ✅ Shadcn
+} from '@/components/ui/table'
 
 import { useTableParams } from '@/modules/clients/hooks/use-table-params'
 
+import { deleteCliente, toggleAtivoCliente } from '@/actions/client'
 import { ClienteDeleteDialog } from '@/modules/clients/ui/components/client-delet-dialog'
 import { TablePagination } from '@/modules/clients/ui/components/table-pagination'
 import type { ClienteListItem } from '@/types/user.type'
 import { formatCNPJ, formatCPF, getDisplayName } from '@/utils/formater'
-import { deleteCliente, toggleAtivoCliente } from '../../../../actions/client'
 
 interface ClienteTableProps {
   clientes: ClienteListItem[]
