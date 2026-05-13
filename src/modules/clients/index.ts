@@ -1,2 +1,2 @@
-export * from './views/client-form'
-export * from './views/client-table'
+export * from './ui/views/client-form'
+export * from './ui/views/client-table'

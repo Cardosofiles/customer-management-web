@@ -32,13 +32,13 @@ import {
   TableRow,
 } from '@/components/ui/table' // ✅ Shadcn
 
-import { useTableParams } from '@/hooks/use-table-params'
+import { useTableParams } from '@/modules/clients/hooks/use-table-params'
 
-import { ClienteDeleteDialog } from '@/modules/clients/components/client-delet-dialog'
-import { TablePagination } from '@/modules/clients/components/table-pagination'
+import { ClienteDeleteDialog } from '@/modules/clients/ui/components/client-delet-dialog'
+import { TablePagination } from '@/modules/clients/ui/components/table-pagination'
 import type { ClienteListItem } from '@/types/user.type'
 import { formatCNPJ, formatCPF, getDisplayName } from '@/utils/formater'
-import { deleteCliente, toggleAtivoCliente } from '../../../actions/client'
+import { deleteCliente, toggleAtivoCliente } from '../../../../actions/client'
 
 interface ClienteTableProps {
   clientes: ClienteListItem[]
