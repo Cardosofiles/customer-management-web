@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-// ── Sign In Form Schemas ────────────────────────────────────────────────────────────────────
+// ── Sign In Form Schemas ─────────────────────────────────────────────────────────────────────────
 export const signInFormSchema = z.object({
   email: z.email({
     message: 'Email é obrigatório',
@@ -8,7 +8,7 @@ export const signInFormSchema = z.object({
   password: z.string().min(1, { message: 'Senha é obrigatória' }).max(20),
 })
 
-// ── Sign Up Form Schemas ────────────────────────────────────────────────────────────────────
+// ── Sign Up Form Schemas ─────────────────────────────────────────────────────────────────────────
 export const signUpFormSchema = z
   .object({
     name: z.string().min(1, { message: 'Nome é obrigatório' }).max(100),
@@ -23,12 +23,12 @@ export const signUpFormSchema = z
     path: ['confirmPassword'],
   })
 
-// ── Forgot Password & Reset Password Schemas ────────────────────────────────────────────────────────────────────
+// ── Forgot Password & Reset Password Schemas ─────────────────────────────────────────────────────
 export const forgotPasswordSchema = z.object({
   email: z.email({ message: 'Email é obrigatório' }),
 })
 
-// ── Reset Password Schema ────────────────────────────────────────────────────────────────────
+// ── Reset Password Schema ────────────────────────────────────────────────────────────────────────
 export const resetPasswordSchema = z
   .object({
     newPassword: z.string().min(8, { message: 'Senha deve ter no mínimo 8 caracteres' }).max(20),

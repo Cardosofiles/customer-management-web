@@ -2,7 +2,7 @@ import type { PessoaFisicaFormData, PessoaJuridicaFormData } from '@/types/user.
 import { validateCNPJ, validateCPF } from '@/utils/formater'
 import { z } from 'zod'
 
-// ── Endereço ────────────────────────────────────────────────────────────────
+// ── Endereço ─────────────────────────────────────────────────────────────────────────────────────
 const enderecoShape = {
   cep: z
     .string()
@@ -16,7 +16,7 @@ const enderecoShape = {
   estado: z.string().length(2, 'Selecione o estado'),
 }
 
-// ── Contato ─────────────────────────────────────────────────────────────────
+// ── Contato ──────────────────────────────────────────────────────────────────────────────────────
 const contatoShape = {
   email: z.email('E-mail inválido').optional().or(z.literal('')).default(''),
   telefone: z.string().optional().default(''),
@@ -25,7 +25,7 @@ const contatoShape = {
   observacoes: z.string().optional().default(''),
 }
 
-// ── Pessoa Física ────────────────────────────────────────────────────────────
+// ── Pessoa Física ────────────────────────────────────────────────────────────────────────────────
 export const pessoaFisicaSchema = z.object({
   ...enderecoShape,
   ...contatoShape,
@@ -39,7 +39,7 @@ export const pessoaFisicaSchema = z.object({
   dataNascimento: z.string().optional().default(''),
 })
 
-// ── Pessoa Jurídica ──────────────────────────────────────────────────────────
+// ── Pessoa Jurídica ──────────────────────────────────────────────────────────────────────────────
 export const pessoaJuridicaSchema = z.object({
   ...enderecoShape,
   ...contatoShape,
@@ -56,7 +56,7 @@ export const pessoaJuridicaSchema = z.object({
   responsavelCargo: z.string().optional().default(''),
 })
 
-// ── Union ────────────────────────────────────────────────────────────────────
+// ── Union ────────────────────────────────────────────────────────────────────────────────────────
 export const clienteSchema = z.discriminatedUnion('tipo', [
   pessoaFisicaSchema,
   pessoaJuridicaSchema,
