@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
-import { useCep } from '@/hooks/use-cep'
+import { useCep } from '@/modules/clients/hooks/use-cep'
 import { clienteSchema, defaultValuesPF, defaultValuesPJ } from '@/schemas/client.schema'
 import type { ClienteFormData, ClienteFormInputData } from '@/types/user.type'
 import { ESTADOS_BR, formatCEP, formatCNPJ, formatCPF, formatTelefone } from '@/utils/formater'
