@@ -1,5 +1,7 @@
 'use client'
 
+import type { JSX } from 'react'
+
 import * as React from 'react'
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
 
@@ -137,7 +139,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function ChartAreaInteractive() {
+const ChartAreaInteractive = (): JSX.Element => {
   const isMobile = useIsMobile()
   // initialize timeRange based on current device to avoid synchronous setState in an effect
   const [timeRange, setTimeRange] = React.useState(() => (isMobile ? '7d' : '90d'))
@@ -260,3 +262,5 @@ export function ChartAreaInteractive() {
     </Card>
   )
 }
+
+export { ChartAreaInteractive }
