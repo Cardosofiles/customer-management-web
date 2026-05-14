@@ -47,17 +47,17 @@ app/page.tsx
 Arquivo em `src/actions/<feature>.ts`:
 
 ```typescript
-"use server";
+'use server'
 
-import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
-import { clientSchema } from "@/schemas/client";
+import { prisma } from '@/lib/prisma'
+import { revalidatePath } from 'next/cache'
+import { clientSchema } from '@/schemas/client'
 
 export async function createClient(formData: unknown) {
-  const data = clientSchema.parse(formData);
-  const client = await prisma.cliente.create({ data });
-  revalidatePath("/clients");
-  return client;
+  const data = clientSchema.parse(formData)
+  const client = await prisma.cliente.create({ data })
+  revalidatePath('/clients')
+  return client
 }
 ```
 
@@ -119,20 +119,16 @@ export function ClientForm() {
 ## Tabelas (TanStack Table)
 
 ```typescript
-import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-} from "@tanstack/react-table";
+import { useReactTable, getCoreRowModel, flexRender } from '@tanstack/react-table'
 
 const table = useReactTable({
   data,
   columns,
   getCoreRowModel: getCoreRowModel(),
-  manualPagination: true,   // paginação server-side
-  manualFiltering: true,    // filtragem via URL params
+  manualPagination: true, // paginação server-side
+  manualFiltering: true, // filtragem via URL params
   pageCount,
-});
+})
 ```
 
 - Paginação e filtros são gerenciados via URL search params (`use-table-params.ts`).
@@ -143,20 +139,20 @@ const table = useReactTable({
 ## Data Fetching (React Query)
 
 ```typescript
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 // Query
 const { data, isLoading } = useQuery({
-  queryKey: ["clients", filters],
+  queryKey: ['clients', filters],
   queryFn: () => getClients(filters),
-});
+})
 
 // Mutation com invalidação
-const queryClient = useQueryClient();
+const queryClient = useQueryClient()
 const { mutate } = useMutation({
   mutationFn: deleteClient,
-  onSuccess: () => queryClient.invalidateQueries({ queryKey: ["clients"] }),
-});
+  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['clients'] }),
+})
 ```
 
 - Query keys sempre incluem os filtros/params para cache granular.
@@ -203,8 +199,8 @@ Sempre usar estes helpers para exibição; nunca formatar inline nos componentes
 ```typescript
 const { data } = await fetch(
   `https://viacep.com.br/ws/${cep}/json/`,
-  { signal: AbortSignal.timeout(10_000) }   // timeout de 10s
-);
+  { signal: AbortSignal.timeout(10_000) } // timeout de 10s
+)
 ```
 
 - Timeout explícito de 10 segundos.
@@ -217,7 +213,7 @@ const { data } = await fetch(
 
 ```typescript
 // Sempre importar o singleton
-import { prisma } from "@/lib/prisma";
+import { prisma } from '@/lib/prisma'
 
 // Após mudança no schema:
 // 1. pnpm db:migrate   → gera e aplica migration
@@ -242,16 +238,16 @@ import { prisma } from "@/lib/prisma";
 
 ## Convenções de Nomenclatura
 
-| Item | Padrão | Exemplo |
-|---|---|---|
-| Componentes React | PascalCase | `ClientForm` |
-| Hooks | camelCase com prefixo `use` | `useCep` |
-| Server Actions | camelCase, verbo + substantivo | `createClient` |
-| Arquivos de componente | kebab-case | `client-form.tsx` |
-| Schemas Zod | camelCase com sufixo `Schema` | `clientSchema` |
-| Variáveis de ambiente | SCREAMING_SNAKE_CASE | `DATABASE_URL` |
-| Modelos Prisma | PascalCase em inglês/pt-BR | `Cliente`, `User` |
-| Campos Prisma | camelCase | `nomeCompleto`, `dataNascimento` |
+| Item                   | Padrão                         | Exemplo                          |
+| ---------------------- | ------------------------------ | -------------------------------- |
+| Componentes React      | PascalCase                     | `ClientForm`                     |
+| Hooks                  | camelCase com prefixo `use`    | `useCep`                         |
+| Server Actions         | camelCase, verbo + substantivo | `createClient`                   |
+| Arquivos de componente | kebab-case                     | `client-form.tsx`                |
+| Schemas Zod            | camelCase com sufixo `Schema`  | `clientSchema`                   |
+| Variáveis de ambiente  | SCREAMING_SNAKE_CASE           | `DATABASE_URL`                   |
+| Modelos Prisma         | PascalCase em inglês/pt-BR     | `Cliente`, `User`                |
+| Campos Prisma          | camelCase                      | `nomeCompleto`, `dataNascimento` |
 
 ---
 
