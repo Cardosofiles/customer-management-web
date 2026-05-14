@@ -289,6 +289,36 @@ export async function getClientesMetricsMes(): Promise<
   }
 }
 
+// ── CHART DATA ────────────────────────────────────────────────────────────────
+export async function getClientesChartData(days: number = 90): Promise<
+  ActionResult<Array<{ date: string; pessoaFisica: number; pessoaJuridica: number }>>
+> {
+  try {
+    const cutoff = new Date()
+    cutoff.setDate(cutoff.getDate() - days)
+
+    const clientes = await db.cliente.findMany({
+      where: { createdAt: { gte: cutoff } },
+      select: { createdAt: true, tipo: true },
+      orderBy: { createdAt: 'asc' },
+    })
+
+    const byDate = new Map<string, { pessoaFisica: number; pessoaJuridica: number }>()
+    for (const c of clientes) {
+      const date = c.createdAt.toISOString().slice(0, 10)
+      if (!byDate.has(date)) byDate.set(date, { pessoaFisica: 0, pessoaJuridica: 0 })
+      const entry = byDate.get(date)!
+      if (c.tipo === 'PESSOA_FISICA') entry.pessoaFisica++
+      else entry.pessoaJuridica++
+    }
+
+    const data = Array.from(byDate.entries()).map(([date, counts]) => ({ date, ...counts }))
+    return { success: true, data }
+  } catch {
+    return { success: false, error: 'Erro ao carregar dados do gráfico.' }
+  }
+}
+
 // ── GET BY ID ─────────────────────────────────────────────────────────────────
 export async function getClienteById(id: string): Promise<ActionResult<Cliente>> {
   try {

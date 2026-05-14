@@ -1,3 +1,4 @@
+import { Analysis } from '@/modules/analysis'
 import type { Metadata } from 'next'
 import type { JSX } from 'react'
 
@@ -7,11 +8,7 @@ export const metadata: Metadata = {
 }
 
 const DashboardPage = (): JSX.Element => {
-  return (
-    <div>
-      <h1>DashboardPage</h1>
-    </div>
-  )
+  return <Analysis />
 }
 
 export default DashboardPage
