@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 const SettingsPage = async (): Promise<JSX.Element> => {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session) redirect('/sign-in')
-  return <Profile user={session.user} />
+  return <Profile user={session.user} currentSessionToken={session.session.token} />
 }
 
 export default SettingsPage
