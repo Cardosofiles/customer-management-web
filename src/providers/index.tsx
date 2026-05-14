@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/sonner'
 import { NextThemeProvider } from '@/providers/next-theme'
 import { TanstackQueryProvider } from '@/providers/tanstack-query'
 import { TooltipHoverProvider } from '@/providers/tooltip-hover'
@@ -17,6 +18,7 @@ export function Providers({ children }: ProvidersProps) {
       <TanstackQueryProvider>
         <TooltipHoverProvider>{children}</TooltipHoverProvider>
       </TanstackQueryProvider>
+      <Toaster richColors position="top-right" />
     </NextThemeProvider>
   )
 }

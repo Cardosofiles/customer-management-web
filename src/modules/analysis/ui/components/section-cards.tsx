@@ -1,5 +1,7 @@
 'use client'
 
+import type { JSX } from 'react'
+
 import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -24,7 +26,7 @@ function formatPercent(value: number) {
   return `${sign}${formatted}%`
 }
 
-export function SectionCards() {
+const SectionCards = (): JSX.Element => {
   const {
     totalMes,
     pfMes,
@@ -130,3 +132,5 @@ export function SectionCards() {
     </div>
   )
 }
+
+export { SectionCards }
